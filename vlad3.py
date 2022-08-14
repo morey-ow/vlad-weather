@@ -6,7 +6,7 @@ from manim import *
 # %%
 #import CSV file
 df = pd.read_csv('dfRaw.csv')
-del df['Unnamed: 0']
+df=df.drop(['Unnamed: 0','wdir', 'pres', 'tsun'], axis=1)
 df
 # %%
 df.columns
@@ -18,11 +18,12 @@ df = df.rename(columns={
         'tmax': 'Max Temp (°C)', 
         'prcp': 'Precipitation (mm)', 
         'snow': 'Snow (mm)',
-        'wdir': 'Wind Direction Degrees (°)',
+  #      'wdir': 'Wind Direction Degrees (°)',
         'wspd': 'Wind Spd (km/h)', 
         'wpgt': 'Peak Wind Gust (km/h)',
-        'pres': 'Sea-Level Pressure (hPa)', 
-        'tsun': 'Daily Sunshine (mins) '})
+  #      'pres': 'Sea-Level Pressure (hPa)', 
+  #      'tsun': 'Daily Sunshine (mins) '
+   })
 # %%
 # convert Date column to datetime object
 from datetime import datetime
@@ -47,12 +48,59 @@ print(df)
 
 # %%
 #move date column to front
-data_column=df.pop('Date')
-df.insert(0,'Date', data_column)
+date_column=df.pop('Date')
+df.insert(0,'Date', date_column)
+df
 
 # %%
 df
 # %%
 import dtale
-dtale.show(df)
+x=dtale.show(df)
+print(x.main_url()) #url where dtale gui loads
+# %%
+#add year column and month column
+df['Year']=df['Date'].apply(lambda d: d.year)
+df['Month']=df['Date'].apply(lambda d: d.month)
+# %%
+df_grouped=df.groupby(['Year', 'Month']).mean().reset_index()
+df_grouped.head()
+# %%
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('MacOSX')
+
+
+df_grouped.plot(y='Avg Temp (°F)')
+#plt.savefig()
+plt.show()
+# %%
+import numpy as np
+x=df_grouped.index
+y=df_grouped['Avg Temp (°F)']
+# %%
+plt.plot(x,y, color=BLUE)
+plt.show()
+# %%
+def least_squares(X,b):
+    return np.linalg.inv(X.T@X)@X.T@b
+
+# %%
+#check our least squares can disc y=2x+1
+X=np.array([0,1, 2, 1]).reshape(2,2)
+b=np.array([1,5]).reshape(2,1)
+least_squares(X, b)
+
+# %%#
+#find the best sinusoidal function predicting 
+#average temperature
+p=2*np.pi/12 #period is 1 year
+# a cos px + b sin px +c is a sinusoidal
+#x=np.array(df_grouped.index)
+x=df_grouped.index
+
+X=np.array([np.cos(p*x), np.sin(p*x), np.ones(len(x))]).T
+b=df_grouped['Avg Temp (°F)']
+coefficients = least_squares(X,b) #= [a,b,c]
+y_pred=X@coefficients
 # %%
