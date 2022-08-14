@@ -1,11 +1,12 @@
 #%%
 import pandas as pd
 import numpy as np
-from manim import *
+#from manim import *
 
 # %%
 #import CSV file
-df = pd.read_csv('dfRaw.csv')
+url='https://raw.githubusercontent.com/morey-ow/vlad-weather/main/dfRaw.csv'
+df = pd.read_csv(url)
 df=df.drop(['Unnamed: 0','wdir', 'pres', 'tsun'], axis=1)
 df
 # %%
