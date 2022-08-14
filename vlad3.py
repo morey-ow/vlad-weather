@@ -53,11 +53,11 @@ df.insert(0,'Date', date_column)
 df
 
 # %%
-df
+#df
 # %%
-import dtale
-x=dtale.show(df)
-print(x.main_url()) #url where dtale gui loads
+#import dtale
+#x=dtale.show(df)
+#print(x.main_url()) #url where dtale gui loads
 # %%
 #add year column and month column
 df['Year']=df['Date'].apply(lambda d: d.year)
@@ -76,11 +76,6 @@ df_grouped.plot(y='Avg Temp (°F)')
 plt.show()
 # %%
 import numpy as np
-x=df_grouped.index
-y=df_grouped['Avg Temp (°F)']
-# %%
-plt.plot(x,y, color=BLUE)
-plt.show()
 # %%
 def least_squares(X,b):
     return np.linalg.inv(X.T@X)@X.T@b
@@ -98,9 +93,14 @@ p=2*np.pi/12 #period is 1 year
 # a cos px + b sin px +c is a sinusoidal
 #x=np.array(df_grouped.index)
 x=df_grouped.index
+y=df_grouped['Avg Temp (°F)']
+plt.scatter(x,y, color=BLUE)
 
 X=np.array([np.cos(p*x), np.sin(p*x), np.ones(len(x))]).T
-b=df_grouped['Avg Temp (°F)']
-coefficients = least_squares(X,b) #= [a,b,c]
+y=df_grouped['Avg Temp (°F)']
+coefficients = least_squares(X,y) #= [a,b,c]
 y_pred=X@coefficients
+
+plt.plot(x, y_pred, color=BLUE, label='sinusoidal')
+plt.show()
 # %%
