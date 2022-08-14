@@ -95,13 +95,22 @@ p=2*np.pi/12 #period is 1 year
 #x=np.array(df_grouped.index)
 x=df_grouped.index
 y=df_grouped['Avg Temp (°F)']
-plt.scatter(x,y, color=BLUE)
+plt.scatter(x,y, color='blue')
 
 X=np.array([np.cos(p*x), np.sin(p*x), np.ones(len(x))]).T
 y=df_grouped['Avg Temp (°F)']
 coefficients = least_squares(X,y) #= [a,b,c]
 y_pred=X@coefficients
 
-plt.plot(x, y_pred, color=BLUE, label='sinusoidal')
+plt.plot(x, y_pred, c='red', label='sinusoidal')
 plt.show()
+# %%
+import bokeh
+from bokeh.plotting import figure, show
+from bokeh.io import output_notebook
+output_notebook()
+myfigure=figure(match_aspect=True, aspect_scale=1) #create a figure using figure from bokeh.plotting module
+myfigure.line(x,y, size=30, color='red')
+myfigure.line(x,y)
+show(myfigure)
 # %%
